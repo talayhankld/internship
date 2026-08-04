@@ -2,7 +2,7 @@ namespace GitTransactionsService.Services;
 
 using GitTransactionsService.Interfaces;
 
-public class TransactionRepository : ITransactionRepository
+public class TransactionRepository
 {
     private List<string> _transactions = new List<string>();
     public void AddTransaction(string id, string message)

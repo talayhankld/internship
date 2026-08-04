@@ -1,8 +1,12 @@
-namespace GitTransactionsService.Interfaces;
+using GitTransactionsService.Models;
 
-public interface ITransactionRepository
+namespace GitTransactionsService.Interfaces
 {
-    void AddTransaction(string id, string message);
-    string GetTransactionById(string id);
-    List<string> GetAllTransactions();
+    public interface ITransactionRepository
+    {
+        Task<IEnumerable<Transaction>> GetAllAsync();
+        Task<Transaction> GetByIdAsync(int id);
+        Task AddAsync(Transaction transaction);
+        Task UpdateAsync(Transaction transaction); 
+    }
 }
