@@ -84,33 +84,20 @@ This method works for `Circle`, `Square`, `Triangle` — or any future shape —
 
 ---
 
-## 5. Common Syntax Mistakes (Things I Got Wrong Before)
 
-| ❌ Wrong | ✅ Correct | Why |
-|---|---|---|
-| `public class Triangle : IShape public void getarea...` (no braces) | Everything inside `{ }` | Curly braces define where the class/method body starts and ends |
-| `public void getarea.triangle` | `public double GetArea()` | No dots in method names. Method must match the interface's return type (`double`, not `void`) and **exact name/casing** (`GetArea`, not `getarea`) |
-| `return = base*height/2` | `return Base * Height / 2;` | No `=` after `return`. Every statement ends with `;` |
-| Using `height`/`base` without declaring them | `public double Height;` / `public double Base;` first | You must declare a variable before using it — it's the class's data |
-
-**Case sensitivity matters in C#.** `GetArea` and `getarea` are two different names to the compiler.
-
----
-
-## 6. Quick Self-Test
+## 5. Quick Self-Test
 
 Answer these without looking above:
 
 1. What are the 3 parts needed to define and use an interface?
 2. If I create a `Rectangle : IShape` class, what's the ONE method I'm required to write?
 3. Why can't `PrintArea(IShape shape)` be called with an object that has no `GetArea()` method?
-4. What symbol/keyword is missing if my code won't compile because "not all statements ended properly"?
 
-*(Answers: 1. interface declaration, method signature, implementing class · 2. `GetArea()` returning a `double` · 3. Because C# won't compile a class that claims `: IShape` but doesn't implement everything the interface promises · 4. A semicolon `;`)*
+*(Answers: 1. interface declaration, method signature, implementing class · 2. `GetArea()` returning a `double` · 3. Because C# won't compile a class that claims `: IShape` but doesn't implement everything the interface promises ·)*
 
 ---
 
-## 7. Connecting to Real Work (Fintech / Git Transactions Service)
+## 6. Connecting to Real Work (Fintech / Git Transactions Service)
 
 Same pattern, applied to my internship task:
 
