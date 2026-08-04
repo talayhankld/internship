@@ -1,11 +1,9 @@
 # Internship Daily Log
 
-> Her gün sonunda 5 dakika ayır, en üste yeni bir bölüm ekle. Eski günleri silme — zamanla kendi ilerleme kayıtların oluşacak.
-
 ---
 
 ## YYYY-MM-DD (Gün)
-**Görev:** (bugün ne yapman istendi)
+**Görev:** 
 
 **Yaptıklarım:**
 -
