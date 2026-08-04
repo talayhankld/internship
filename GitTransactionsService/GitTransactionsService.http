@@ -1,0 +1,6 @@
+@GitTransactionsService_HostAddress = http://localhost:5168
+
+GET {{GitTransactionsService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
