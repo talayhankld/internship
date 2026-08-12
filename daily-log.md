@@ -22,6 +22,30 @@
 
 ---
 
+## 2026-08-10 (Pazartesi)
+
+**Görev:**
+Transaction (İşlem) API'sinin DTO ve Repository Pattern ile iyileştirilmesi, güvenlik standartlarının artırılması ve iptal (cancellation) kurgusunun geliştirilmesi.
+
+**Yaptıklarım:**
+- İç veritabanı ID'lerinin dışarıdan gizlenmesi ve API yanıtlarında sadece sistemin ürettiği benzersiz referans numaralarının (ReferenceNumber) kullanılması sağlandı.
+- API'ye gelen isteklerde güvenliği sağlamak için CreateTransactionRequest ve CancelTransactionRequest DTO (Data Transfer Object) sınıfları oluşturuldu.
+- Kredi kartı bilgilerinin veritabanına kaydedilmeden önce ilk 8 ve son 4 hanesi görünecek şekilde maskelenmesi algoritması yazıldı.
+- Repository arayüzüne ve implementasyonuna, işlemleri referans numarası ile bulmayı sağlayan GetByRefNumberAsync metodu eklendi.
+- Kısmi (partial) ve tam (full) iptal senaryolarını yönetmek için veritabanı modeline CancelledAmount eklendi. İşlem sorgulandığında kalan tutarın (CurrentAmount) anlık olarak hesaplanıp dönmesi sağlandı.
+
+**Öğrendiklerim:**
+- Dışarıdan gelen verileri doğrudan Entity (veritabanı modeli) ile almak yerine DTO kullanmanın, API'yi Overposting (Mass Assignment) zafiyetinden korumadaki kritik rolü.
+- HTTP GET isteklerinin standart gereği gövde (Body) alamayacağını, bu sebeple [FromBody] kullanımı yerine verilerin URL üzerinden (Route parameter) okunması gerektiğini.
+- Veritabanında bir kaydın bulunamaması durumunda, duruma göre 404 (Not Found) yerine iş kuralı hatası olarak 400 (BadRequest) dönmenin API standartları açısından daha yönetilebilir olabileceğini.
+- C# modellerine sonradan eklenen zorunlu (NOT NULL) alanların, SQLite üzerinde Entity Framework kaydı sırasında HTTP 500 hatalarına yol açtığını; bunun Nullable (?) tiplerle veya Migration komutlarıyla nasıl senkronize edileceğini.
+
+**Zorlandığım kısım:**
+- Sisteme iptal nedeni, kur ve iptal edilen miktar gibi yeni alanlar ekledikten sonra aldığım HTTP 500 hatalarının kaynağını tespit etmek. Hatanın veritabanı şemasındaki (SQLite) uyumsuzluktan kaynaklandığını bulup NOT NULL constraint failed hatasını çözmek biraz zaman aldı. Ayrıca GET metodunda yanlışlıkla [FromBody] kullandığım için frontend/Swagger tarafında aldığım çökme hatasının sebebini bulmak karmaşıktı.
+
+**Yarına not:**
+- Yazdığım kısmi iptal (partial cancellation) mantığının testlerini yap ve tutarın sıfırlanma durumlarında sistemin "Fully Cancelled" durumuna sorunsuz geçtiğinden emin ol. Ayrıca endpoint gereksinimlerine bakarak açıkta ID veya hassas veri dönen başka bir yer kalıp kalmadığını kontrol et.
+
 ## 2026-08-04 (Salı)
 
 **Görev:** 
