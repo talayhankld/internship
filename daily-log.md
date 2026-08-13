@@ -22,6 +22,29 @@
 
 ---
 
+## 2026-08-13 (Perşembe)
+
+**Görev:** Ödeme sistemi mikroservisinde (GitTransactionsService) ilişkisel veritabanı (Foreign Key) bağlantılarını düzeltmek ve API uç noktalarındaki veri tipi uyuşmazlıklarını gidermek.
+
+### Yaptıklarım
+- `Transaction`, `Terminal` ve `Merchant` tabloları arasındaki Primary Key (PK) ve Foreign Key (FK) ilişkilerinde yaşanan `Datatype Mismatch` (int/string) hatalarını giderdim.
+- Kod karmaşasını önlemek adına dışarıdan gelen iş birimi kimliklerini `TerminalNo` standardında birleştirirken, veritabanının arka planda kendi tam sayı (`int Id`) anahtarlarını kullanmasını sağladım.
+- `TransactionsController` içerisindeki `CreateTerminal` ve `AddTransaction` endpoint'lerini Entity Framework standartlarına göre güncelleyerek, gelen istekleri önce veritabanında doğrulayan (`GetTerminalByNoAsync`) güvenli bir akış kurdum.
+- Request DTO'larında büyük/küçük harf duyarlılığı ve tip dönüşümü (`int.Parse`) hatalarını çözdüm.
+
+### Öğrendiklerim
+- Fintech projelerinde veritabanının kendi anahtarı (`int Id`) ile iş birimlerinin kullandığı referans kodlarının (`string TerminalNo`) teknik olarak birbirinden nasıl ayrılması gerektiğini tecrübe ettim.
+- Güvenlik ve veri tutarlılığı açısından, `AddTransaction` gibi işlemlerde dışarıdan ekstra `MerchantId` istemenin gereksiz ve riskli olduğunu; bu bilginin sisteme kayıtlı olan `TerminalNo` üzerinden arka planda çekilmesi gerektiğini öğrendim.
+
+### Zorlandığım Kısım
+- Modellerin birinde yapılan ufak bir veri tipi değişikliğinin (string'den int'e geçiş), Controller, Repository ve Entity Framework katmanlarında yarattığı zincirleme uyumsuzlukları tespit edip temizlemek oldukça yorucuydu.
+
+### Yarına Not
+- Veritabanı şemasındaki güncellemelerden sonra yeni bir migration (`InitialCleanSetup`) oluşturup veritabanını güncellemek.
+- Postman veya Swagger üzerinden Terminal oluşturma ve Transaction ekleme uçtan uca (end-to-end) testlerini gerçekleştirmek.
+
+---
+
 ## 2026-08-10 (Pazartesi)
 
 **Görev:**
