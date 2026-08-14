@@ -22,6 +22,34 @@
 
 ---
 
+# Internship Daily Log
+
+---
+
+## 2026-08-14 (Cuma)
+**Görev:**  Transaction API'sinde Repository Kalıbı ve Model Doğrulama (Validation) Entegrasyonu
+
+**Yaptıklarım:**
+- `ITransactionRepository` ve `EfTransactionRepository` arasındaki arayüz (interface) ve uygulama (implementation) yapısı kuruldu. Controller'ların veritabanı bağlamından (`AppDbContext`) bağımsız çalışması sağlandı.
+- Mükerrer Merchant (Üye İşyeri) ve Terminal kayıtlarını engellemek amacıyla, Entity Framework `AnyAsync` metodu kullanılarak performanslı veritabanı varoluş kontrolleri eklendi.
+- C# 8.0 ve üzeri sürümlerdeki Nullable Reference Types özelliği ile ortaya çıkan olası null referans hataları (CS8618 vb.) `!` (null-forgiving) operatörü ve model seviyesinde `required` kullanımı ile giderildi.
+- Entity Framework Core Migrations kullanılarak veritabanı tamamen sıfırlandı ve güncel model yapılarına (Nullable kurallarına) uygun olarak SQLite üzerinde yeniden inşa edildi.
+- Repository sınıfı içerisindeki kullanılmayan veya birebir aynı işlevi gören (örneğin `CreateTerminalAsync` ve `AddTerminalAsync`) gereksiz metotlar temizlenerek kod sadeleştirildi.
+
+**Öğrendiklerim:**
+- Arayüz (Interface) metodlarında `async` anahtar kelimesinin bulunmaması gerektiği; bu kelimenin yalnızca metodun gövdesini uygulayan (implement eden) somut sınıf içerisinde yer aldığı.
+- Veri varlığını doğrulamak için `FirstOrDefaultAsync` kullanıp dönen sonucun `null` olup olmadığını kontrol etmek yerine, `AnyAsync` metodunu kullanmanın hem kod okunabilirliği hem de sorgu performansı açısından daha verimli olduğu.
+- C# modellerinde yapılan değişikliklerin (örneğin bir alana `?` veya `required` eklenmesi) veritabanına yansıması için mutlaka yeni bir Migration oluşturulması (`dotnet ef migrations add`) ve veritabanının güncellenmesi (`dotnet ef database update`) gerektiği.
+
+**Zorlandığım kısım:**
+- Controller katmanındaki veri kontrolleri (örneğin Currency'nin null gelme ihtimali) ile Entity Framework'ün veri getirme metodlarının (bulamadığında null dönmesi) neden olduğu derleyici uyarılarını (sarı çizgileri) gidermek ve bu uyarıların mantığını kavramak başlangıçta kafa karıştırıcıydı.
+
+**Yarına not:**
+- Yeni bir API ucu eklerken Repository'de gereksiz bir kopya metot oluşturup oluşturmadığıma dikkat etmeliyim.
+- Controller ve Repository arasındaki bağımlılık yapısı oturdu; bir sonraki aşamada hata yönetimi (exception handling) ve loglama yapıları üzerine yoğunlaşılabilir.
+
+---
+
 ## 2026-08-13 (Perşembe)
 
 **Görev:** Ödeme sistemi mikroservisinde (GitTransactionsService) ilişkisel veritabanı (Foreign Key) bağlantılarını düzeltmek ve API uç noktalarındaki veri tipi uyuşmazlıklarını gidermek.
