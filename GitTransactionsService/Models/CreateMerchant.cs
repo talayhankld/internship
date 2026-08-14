@@ -1,11 +1,14 @@
+using System.ComponentModel;
 namespace GitTransactionsService.Models;
 
-public class Merchant
+public class CreateMerchant
 {
-    public int Id { get; set; }
-    public string MerchantId { get; set; } = string.Empty;
+    [DefaultValue("Provision")]
     public string Name { get; set; } = string.Empty;
+
+    [DefaultValue("Istanbul")]
     public string City { get; set; } = string.Empty;
+
+    [DefaultValue("Active")]
     public string Status { get; set; } = string.Empty;
-    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 }

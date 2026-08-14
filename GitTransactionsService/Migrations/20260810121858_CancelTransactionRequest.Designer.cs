@@ -3,6 +3,7 @@ using System;
 using GitTransactionsService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GitTransactionsService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260810121858_CancelTransactionRequest")]
+    partial class CancelTransactionRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
@@ -28,10 +31,6 @@ namespace GitTransactionsService.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MerchantId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -56,13 +55,8 @@ namespace GitTransactionsService.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MerchantId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("MerchantId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -86,7 +80,8 @@ namespace GitTransactionsService.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("CancelAmount")
+                    b.Property<string>("CancelAmount")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CancellationReason")
@@ -103,7 +98,8 @@ namespace GitTransactionsService.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("CurrentAmount")
+                    b.Property<string>("CurrentAmount")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ReferenceNumber")
@@ -114,9 +110,8 @@ namespace GitTransactionsService.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TerminalNo")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("TerminalId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("TEXT");
