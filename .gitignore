@@ -1,1 +1,35 @@
+# =========================
+# .NET Core Derleme Klasörleri
+# =========================
+bin/
+obj/
+
+# =========================
+# SQLite Veritabanı Dosyaları
+# =========================
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# =========================
+# Mac İşletim Sistemi Dosyaları
+# =========================
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# =========================
+# Editör / IDE Dosyaları (VS Code, Visual Studio vb.)
+# =========================
+.vscode/
+.idea/
+*.user
+*.suo
+*.sln.docstates
+
+# =========================
+# Yapılandırma ve Gizli Dosyalar
+# =========================
+appsettings.Development.json
