@@ -26,6 +26,25 @@
 
 ---
 
+## 2026-08-17 (Pazartesi)
+**Görev:** Terminal ve Üye İşyeri (Merchant) durum kontrolü (Status Check) mantığının kurulması, arayüz (Interface) uyumsuzluklarının giderilmesi.
+
+**Yaptıklarım:**
+- Terminal ve Merchant nesnelerindeki `Status` isimlendirme çakışmasını çözmek için özel `TerminalStatus` ve `MerchantStatus` Enum'ları oluşturuldu ve "Composition" yapısı kullanılarak veriler izole edildi.
+- `ITransactionRepository` ve `EfTransactionRepository` içerisindeki metot imzaları (`CheckTerminalStatusValidAsync`, `CheckStatusAsync` vb.) asenkron `Task` ve `Task<bool>` dönüş tiplerine uygun şekilde senkronize edildi.
+- API Controller'daki `CheckStatus` metodu, statik enum'lar yerine doğrudan veritabanından `GetMerchantByIdAsync` ve `GetTerminalByNoAsync` ile güncel verileri çekecek şekilde yeniden yazıldı.
+
+**Öğrendiklerim:**
+- C#'ta Interface (Arayüz) ve onu implemente eden sınıflar (Class) arasında parametre tiplerinin, isimlerin ve asenkron dönüş tiplerinin (`Task`) birebir aynı olması gerektiği.
+- Sadece `Task` dönen asenkron metotların bir değer döndürmek yerine hata (Exception) fırlatarak (örneğin `InvalidOperationException`) kontrol akışını nasıl yönetebileceği.
+- Entity Framework Core'da model değişikliklerinin veritabanına nasıl yansıtılacağı ve SQLite'ın yerel geliştirme ortamında nasıl inceleneceği (`sqlite3` komutları).
+
+**Zorlandığım kısım:**
+- Başlangıçta Interface ve Repository arasındaki metot imzalarının (özellikle parametre tiplerinin string yerine Enum olması ve asenkron `Task` dönüşleri) tam eşleşmesini sağlamak ve derleme hatalarını çözmek zaman aldı.
+
+**Yarına not:**
+- Yazılan durum kontrolü (CheckStatus) endpoint'ini Swagger veya Postman üzerinden farklı senaryolarla (Aktif/Pasif üye işyeri, Bakımdaki terminal vb.) test et.
+
 ## 2026-08-14 (Cuma)
 **Görev:**  Transaction API'sinde Repository Kalıbı ve Model Doğrulama (Validation) Entegrasyonu
 
