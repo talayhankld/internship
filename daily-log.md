@@ -25,6 +25,28 @@
 # Internship Daily Log
 
 ---
+# Internship Daily Log
+
+
+---
+
+## 2026-08-20 (Perşembe)
+
+**Yaptıklarım:**
+- `EfTransactionRepository` katmanında "Composite Key" mantığı kurarak, terminal sorgularında aynı anda hem `MerchantId` hem de `TerminalNo` eşleşmesini arayan `GetTerminalAsync` metodunu geliştirdim.
+- `TransactionsController` içerisindeki durum sorgulama endpoint'lerini birbirinden ayırdım ve `[HttpPost]` yerine HTTP standartlarına daha uygun olan `[HttpGet]` ile rotalandırdım (Route: `/api/merchants/{merchantId}/terminals/{terminalNo}/status`).
+- Arayüz (`index.html`) tarafında tek bir "Verify Status" butonu üzerinden çalışan akıllı (smart) bir JavaScript fonksiyonu yazdım; kullanıcı sadece Merchant ID girerse işyerini, Terminal No da girerse doğrudan o işyerine ait spesifik terminali sorguluyor.
+- API'nin sadece `true/false` dönmesi yerine; "Terminal bulunamadı", "Kapalı durumda (Inactive)" gibi durumları (Enum) kontrol ederek spesifik hata mesajları döndüren detaylı bir validasyon yapısı kurdum.
+
+**Öğrendiklerim:**
+- Entity Framework'te `FirstOrDefaultAsync` kullanarak veritabanına tek bir sorgu (trip) atıp, dönen objenin özellikleri üzerinden Controller'da detaylı hata yönetimi yapmanın performans ve kod okunabilirliği açısından daha verimli olduğunu gördüm.
+- `[HttpGet]` isteklerinde parametrelerin `[FromBody]` yerine URL üzerinden `[FromRoute]` ile alınması gerektiğini, aksi takdirde ASP.NET'in `RFC9110` referanslı `400 Bad Request` validasyon hatası fırlattığını tecrübe ettim.
+- Veri tipi olan Enum'lar (örn. `TerminalStatus`) ile veritabanı kolonu olan Property (`Status`) kavramları arasındaki farkı daha net kavradım.
+
+**Zorlandığım kısım:**
+- Controller'daki URL rotaları ile JavaScript'in `fetch` ile istek attığı adresler arasında (ve beklenen parametrelerde) yaşanan uyuşmazlıklar nedeniyle alınan "404 Not Found" ve "Network error" hatalarını ayıklamak biraz zaman aldı. Eski `GetTerminalByNoAsync` metodunun Controller içinde kalması kaynaklı derleme (build) sorunlarını çözünce akış düzeldi.
+
+---
 
 ## 2026-08-19 (Çarşamba)
 **Görev:** Backend API servisleri için Swagger'a alternatif, tüm işlemleri görsel olarak yönetebileceğim kullanıcı dostu bir HTML kontrol paneli (Dashboard) geliştirmek.
