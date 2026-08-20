@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Payment Gateway</title>
+    <style>
+        :root {
+            --bg-color: #F2F2F7;
+            --card-bg: #FFFFFF;
+            --text-main: #1C1C1E;
+            --text-muted: #8E8E93;
+            --blue: #007AFF;
+            --green: #34C759;
+            --red: #FF3B30;
+            --border: #E5E5EA;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #000000;
+            --card-bg: #1C1C1E;
+            --text-main: #FFFFFF;
+            --text-muted: #98989D;
+            --blue: #0A84FF;
+            --green: #30D158;
+            --red: #FF453A;
+            --border: #38383A;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-main);
+            padding: 20px; 
+            margin: 0; 
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container { max-width: 1100px; margin: auto; position: relative; }
+
+        .theme-switch {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+        .theme-switch:hover { filter: brightness(0.9); }
+
+        .header { text-align: center; margin: 30px 0 40px; }
+        .header h2 { margin: 0; font-weight: 700; font-size: 28px; letter-spacing: -0.5px; }
+        .header p { color: var(--text-muted); font-size: 15px; margin-top: 8px; }
+        
+        .section-title { 
+            font-size: 20px; font-weight: 700; 
+            margin: 40px 0 15px 0; 
+            color: var(--text-main); letter-spacing: -0.3px;
+        }
+
+        .dashboard-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 20px; 
+        }
+        
+        .card { 
+            background: var(--card-bg); padding: 24px; 
+            border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); 
+            display: flex; flex-direction: column;
+            transition: background-color 0.3s;
+        }
+        
+        h3 { margin-top: 0; color: var(--text-main); font-size: 17px; font-weight: 600; }
+        
+        .input-group { margin-bottom: 16px; }
+        label { 
+            display: block; font-size: 12px; text-transform: uppercase; 
+            color: var(--text-muted); font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px;
+        }
+        input { 
+            width: 100%; padding: 14px 16px; font-size: 16px; 
+            background-color: var(--bg-color); border: 1px solid var(--border); 
+            border-radius: 12px; box-sizing: border-box; color: var(--text-main);
+            transition: 0.2s;
+        }
+        input:focus { outline: none; border-color: var(--blue); background-color: var(--card-bg); }
+        
+        button { 
+            width: 100%; padding: 14px; font-size: 16px; font-weight: 600; 
+            color: white; border: none; border-radius: 12px; cursor: pointer; 
+            transition: opacity 0.2s; margin-top: auto; 
+        }
+        button:active { opacity: 0.7; }
+        button.btn-primary { background-color: var(--blue); }
+        button.btn-success { background-color: var(--green); color: #000; }
+        button.btn-danger { background-color: var(--red); color: #FFF; }
+        button.btn-secondary { background-color: var(--border); color: var(--text-main); }
+        
+        .resultBox { 
+            margin-top: 20px; padding: 16px; border-radius: 12px; 
+            display: none; font-size: 14px; background-color: var(--bg-color);
+        }
+        .resultBox.success { border-left: 4px solid var(--green); }
+        .resultBox.error { border-left: 4px solid var(--red); }
+        
+        .output-list { list-style: none; padding: 0; margin: 0; }
+        .output-list li { 
+            padding: 10px 0; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            gap: 15px; 
+        }
+        .output-list li:last-child { border-bottom: none; padding-bottom: 0; }
+        .output-label { 
+            color: var(--text-muted); 
+            font-size: 13px; 
+            font-weight: 500; 
+            margin-top: 2px; 
+            flex-shrink: 0; 
+        }
+        .output-value { 
+            color: var(--text-main); 
+            font-weight: 600; 
+            text-align: right; 
+            overflow-wrap: break-word; 
+            white-space: pre-line;  
+            max-width: 100%; 
+        }        
+        .tx-table-container { overflow-x: auto; margin-top: 10px; }
+        .tx-table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
+        .tx-table th { padding: 10px 8px; border-bottom: 2px solid var(--border); color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
+        .tx-table td { padding: 12px 8px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <button class="theme-switch" id="themeToggle" onclick="toggleTheme()">☀️ Light Mode</button>
+
+        <div class="header">
+            <h2>Payment Gateway</h2>
+            <p>Control Panel & Operations</p>
+        </div>
+
+        <div class="section-title">Setup & Configuration</div>
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>Create Merchant</h3>
+                <div class="input-group">
+                    <label>Merchant Name</label>
+                    <input type="text" id="mName" placeholder="Test Store">
+                </div>
+                <div class="input-group">
+                    <label>City</label>
+                    <input type="text" id="mCity" placeholder="Istanbul">
+                </div>
+                <button class="btn-primary" onclick="createMerchant()">Save Merchant</button>
+                <div id="resMerchant" class="resultBox"></div>
+            </div>
+
+            <div class="card">
+                <h3>Create Terminal</h3>
+                <div class="input-group">
+                    <label>Merchant ID</label>
+                    <select id="tMerchantId">
+                        <option value="">-- Loading Merchants... --</option>
+                </select>
+                </div>
+                <div class="input-group">
+                    <label>Terminal No</label>
+                    <input type="text" id="tTerminalNo" placeholder="T-123">
+                </div>
+                <div class="input-group">
+                    <label>Currency</label>
+                    <input type="text" id="tCurrency" placeholder="TRY, USD, or EUR">
+                </div>
+                <button class="btn-primary" onclick="createTerminal()">Save Terminal</button>
+                <div id="resTerminal" class="resultBox"></div>
+            </div>
+
+            <div class="card">
+                <h3>Check Status</h3>
+                <p style="font-size:12px; color:var(--text-muted); margin-top:0;">Sadece Merchant ID giriniz , veya o Merchant'a ait Terminal'in ID'sini giriniz.</p>
+                
+                <div class="input-group">
+                    <label>Merchant ID (Gerekli)</label>
+                    <select id="sMerchantId" onchange="loadTerminals('sMerchantId', 'sTerminalNo')">
+                        <option value="">-- Loading Merchants... --</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Terminal No (Opsiyonel)</label>
+                    <select id="sTerminalNo" disabled>
+                        <option value="">-- First select a merchant --</option>
+                    </select>
+                </div>
+                <button class="btn-primary" onclick="checkSmartStatus()">Verify Status</button>
+                <div id="resStatus" class="resultBox"></div>
+            </div>
+        </div> 
+
+        <div class="section-title">Financial Operations</div>
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>Process Transaction</h3>
+                <div class="input-group">
+                    <label>Merchant ID</label>
+                    <select id="txMerchantId" onchange="loadTerminals('txMerchantId', 'txTerminalNo')">
+                        <option value="">-- Loading Merchants... --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Terminal No</label>
+                    <select id="txTerminalNo" disabled>
+                        <option value="">-- First select a merchant --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Currency</label>
+                    <input type="text" id="txCurrency" placeholder="TRY, USD, or EUR">
+                </div>
+                <div class="input-group">
+                    <label>Amount</label>
+                    <input type="number" id="txAmount" placeholder="0.00">
+                </div>
+                <div class="input-group">
+                    <label>Card Number</label>
+                    <input type="text" id="txCard" maxlength="16" placeholder="16 Digits">
+                </div>
+                <button class="btn-success" onclick="addTransaction()">Charge Card</button>
+                <div id="resAddTx" class="resultBox"></div>
+            </div>
+
+            <div class="card">
+                <h3>Cancel / Refund</h3>
+                <div class="input-group">
+                    <label>Reference Number</label>
+                    <input type="text" id="cxRef">
+                </div>
+                <div class="input-group">
+                    <label>Cancel Amount</label>
+                    <input type="number" id="cxAmount" placeholder="0.00">
+                </div>
+                <button class="btn-danger" onclick="cancelTransaction()">Process Refund</button>
+                <div id="resCancel" class="resultBox"></div>
+            </div>
+        </div>
+
+        <div class="section-title">Reporting</div>
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>Find Transaction</h3>
+                <div class="input-group">
+                    <label>Reference Number</label>
+                    <input type="text" id="findRef">
+                </div>
+                <button class="btn-primary" onclick="getTransaction()">Search</button>
+                <div id="resFind" class="resultBox"></div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1;">
+                <h3>All Transactions</h3>
+                <p style="font-size:13px; color:var(--text-muted); margin-top:0;">Veritabanına kaydedilmiş tüm işlemlerin eksiksiz listesini getirin.</p>
+                <button class="btn-secondary" style="max-width: 200px;" onclick="getAllTransactions()">Load All Data</button>
+                
+                <div id="resAll" class="resultBox" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function toggleTheme() {
+        const doc = document.documentElement;
+        const btn = document.getElementById('themeToggle');
+        
+        if (doc.getAttribute('data-theme') === 'dark') {
+            doc.removeAttribute('data-theme');
+            btn.innerText = '🌙 Dark Mode';
+        } else {
+            doc.setAttribute('data-theme', 'dark');
+            btn.innerText = '☀️ Light Mode';
+        }
+    }
+
+    function formatReadableOutput(data) {
+        if (typeof data === 'string') return `<strong>${data}</strong>`;
+        
+        let html = '<ul class="output-list">';
+        for (const key in data) {
+            const readableKey = key.replace(/([A-Z])/g, ' $1').trim();
+            let value = data[key];
+            
+            if (value === true) value = '✅ Success';
+            if (value === false) value = '❌ Failed';
+            if (value === null) value = '-';
+            
+            html += `
+                <li>
+                    <span class="output-label">${readableKey.charAt(0).toUpperCase() + readableKey.slice(1)}</span>
+                    <span class="output-value">${value}</span>
+                </li>
+            `;
+        }
+        html += '</ul>';
+        return html;
+    }
+
+    // Gelişmiş hata yakalama (404, 500 hatalarını gizlemez, ekrana basar)
+    async function handleResponse(response, boxId) {
+        const box = document.getElementById(boxId);
+        box.style.display = 'block';
+        try {
+            const text = await response.text();
+            try {
+                const data = JSON.parse(text);
+                if (response.ok) {
+                    box.className = 'resultBox success';
+                    box.innerHTML = formatReadableOutput(data);
+                } else {
+                    box.className = 'resultBox error';
+                    box.innerHTML = formatReadableOutput(data);
+                }
+            } catch (err) {
+                box.className = 'resultBox error';
+                box.innerHTML = `<strong>HTTP Status: ${response.status}</strong><br>Sunucu JSON döndürmedi. İstek adresi bulunamadı (404) veya sunucu çöktü (500).`;
+            }
+        } catch {
+            box.className = 'resultBox error';
+            box.innerText = 'Sunucuya hiç ulaşılamadı. Sunucu kapalı olabilir.';
+        }
+    }
+
+    async function loadAllMerchantsToDropdowns() {
+        try {
+            const res = await fetch('/api/merchants');
+            const merchants = await res.json();
+            
+            let optionsHtml = '<option value="">-- Select a Merchant --</option>';
+            merchants.forEach(m => {
+                const id = m.merchantId || m.MerchantId;
+                const name = m.name || m.Name;
+                optionsHtml += `<option value="${id}">${name} (${id})</option>`;
+            });
+            
+            const sMerchantBox = document.getElementById('sMerchantId');
+            const txMerchantBox = document.getElementById('txMerchantId');
+            const tMerchantBox = document.getElementById('tMerchantId');
+
+            if (sMerchantBox) sMerchantBox.innerHTML = optionsHtml;
+            if (txMerchantBox) txMerchantBox.innerHTML = optionsHtml;
+            if (tMerchantBox) tMerchantBox.innerHTML = optionsHtml;
+        } catch (e) {
+            console.error("Merchants API'ye ulaşılamadı. Veritabanı boş veya sunucu kapalı olabilir.");
+        }
+    }
+
+        async function loadTerminals(merchantDropdownId, terminalDropdownId) {
+        const mId = document.getElementById(merchantDropdownId).value;
+        const tDropdown = document.getElementById(terminalDropdownId);
+        
+        if (!mId) {
+            tDropdown.innerHTML = '<option value="">-- First select merchant --</option>';
+            tDropdown.disabled = true;
+            return;
+        }
+        
+        tDropdown.disabled = false;
+        tDropdown.innerHTML = '<option value="">-- Loading... --</option>';
+        
+        try {
+            const res = await fetch(`/api/merchants/${encodeURIComponent(mId)}/terminals/list`);
+            const terminalNumbers = await res.json(); // Artık düz bir string listesi geliyor
+            
+            let optionsHtml = '<option value="">-- Select a Terminal --</option>';
+            
+            terminalNumbers.forEach(tNo => {
+                optionsHtml += `<option value="${tNo}">${tNo}</option>`;
+            });
+            
+            tDropdown.innerHTML = optionsHtml;
+        } catch (e) {
+            tDropdown.innerHTML = '<option value="">Error loading</option>';
+        }
+    }
+
+    // Sayfa tamamen yüklendiğinde otomatik doldurmayı başlat
+    window.addEventListener('DOMContentLoaded', loadAllMerchantsToDropdowns);
+
+    // --- API İŞLEM FONKSİYONLARI ---
+
+    async function createMerchant() {
+        const payload = { Name: document.getElementById('mName').value, City: document.getElementById('mCity').value };
+        const res = await fetch('/api/merchants/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        handleResponse(res, 'resMerchant');
+        // Yeni işyeri eklendikten sonra combobox'ları gizlice güncelle
+        if(res.ok) loadAllMerchantsToDropdowns(); 
+    }
+
+    async function createTerminal() {
+        const mId = document.getElementById('tMerchantId').value;
+        const payload = { TerminalNo: document.getElementById('tTerminalNo').value, Currency: document.getElementById('tCurrency').value };
+        const res = await fetch(`/api/merchants/${mId}/terminals`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        handleResponse(res, 'resTerminal');
+        // İhtiyaç varsa, seçili terminal kutularını da tetikleyebiliriz
+    }
+
+    async function checkSmartStatus() {
+        const mId = document.getElementById('sMerchantId').value;
+        const tNo = document.getElementById('sTerminalNo').value;
+        const box = document.getElementById('resStatus');
+
+        if (!mId) {
+            box.style.display = 'block';
+            box.className = 'resultBox error';
+            box.innerHTML = '<strong>❌ Merchant ID must be selected!</strong>';
+            return;
+        }
+
+        const url = tNo 
+            ? `/api/merchants/${encodeURIComponent(mId)}/terminals/${encodeURIComponent(tNo)}/status`
+            : `/api/merchants/${encodeURIComponent(mId)}/status`;
+            
+        const res = await fetch(url);
+        handleResponse(res, 'resStatus');
+    }
+
+    async function addTransaction() {
+        const payload = {
+            MerchantId: document.getElementById('txMerchantId').value,
+            TerminalNo: document.getElementById('txTerminalNo').value,
+            Currency: document.getElementById('txCurrency').value,
+            Amount: parseFloat(document.getElementById('txAmount').value || 0),
+            CardNumber: document.getElementById('txCard').value
+        };
+        const res = await fetch('/api/transactions/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        handleResponse(res, 'resAddTx');
+    }
+
+    async function cancelTransaction() {
+        const payload = { ReferenceNumber: document.getElementById('cxRef').value, CancelAmount: parseFloat(document.getElementById('cxAmount').value || 0) };
+        const res = await fetch('/api/transactions/cancel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        handleResponse(res, 'resCancel');
+    }
+
+    async function getTransaction() {
+        const ref = document.getElementById('findRef').value;
+        const res = await fetch(`/api/transactions/ReferenceNumber?referenceNumber=${encodeURIComponent(ref)}`);
+        handleResponse(res, 'resFind');
+    }
+
+    async function getAllTransactions() {
+        const box = document.getElementById('resAll');
+        try {
+            const res = await fetch('/api/transactions'); 
+            const data = await res.json();
+            
+            box.style.display = 'block';
+
+            if (res.ok) {
+                box.className = 'resultBox success';
+                
+                if (data.length === 0) {
+                    box.innerHTML = '<strong>No transactions found in database.</strong>';
+                    return;
+                }
+
+                let html = '<div class="tx-table-container"><table class="tx-table">';
+                html += '<tr><th>Ref No</th><th>Terminal</th><th>Card No</th><th>Amount</th><th>Curr</th><th>Status</th><th>Cancel Amt</th></tr>';
+                
+                data.forEach(tx => {
+                    const ref = tx.referenceNumber || tx.ReferenceNumber || '-';
+                    const term = tx.terminalNo || tx.TerminalNo || '-';
+                    const card = tx.cardNumber || tx.CardNumber || '-';
+                    const amt = tx.amount || tx.Amount || 0;
+                    const curr = tx.currency || tx.Currency || '-';
+                    const stat = tx.status || tx.Status || 'Pending';
+                    const cancelAmt = tx.cancelAmount || tx.CancelAmount || 0;
+                    
+                    html += `<tr>
+                        <td style="font-family:monospace; color:var(--blue); font-weight:600;">${ref}</td>
+                        <td>${term}</td>
+                        <td style="font-family:monospace; color:var(--text-muted);">${card}</td>
+                        <td>${amt.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                        <td>${curr}</td>
+                        <td>
+                            <span style="color: ${stat.includes('Cancel') ? 'var(--red)' : (stat === 'Pending' ? '#F5A623' : 'var(--green)')}">
+                                ${stat}
+                            </span>
+                        </td>
+                        <td>${cancelAmt > 0 ? cancelAmt.toLocaleString(undefined, {minimumFractionDigits: 2}) : '-'}</td>
+                    </tr>`;
+                });
+                html += '</table></div>';
+                box.innerHTML = html;
+
+            } else {
+                box.className = 'resultBox error';
+                box.innerHTML = formatReadableOutput(data);
+            }
+        } catch {
+            box.style.display = 'block';
+            box.className = 'resultBox error';
+            box.innerText = 'Network error or invalid response.';
+        }
+    }
+</script>
+</body>
+</html>

@@ -6,6 +6,6 @@ public class Merchant
     public string MerchantId { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
-    public string Status { get; set; } = string.Empty;
+    public MerchantStatus Status { get; set; } = MerchantStatus.Active;
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 }
