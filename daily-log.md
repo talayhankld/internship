@@ -25,6 +25,76 @@
 # Internship Daily Log
 
 ---
+# Internship Daily Log
+
+
+---
+
+# Internship Daily Log
+
+---
+
+## 2026-08-20 (Perşembe)
+
+**Yaptıklarım:**
+- `EfTransactionRepository` katmanında "Composite Key" mantığı kurarak, terminal sorgularında aynı anda hem `MerchantId` hem de `TerminalNo` eşleşmesini arayan `GetTerminalAsync` metodunu geliştirdim.
+- `TransactionsController` içerisindeki durum sorgulama endpoint'lerini birbirinden ayırdım ve `[HttpPost]` yerine HTTP standartlarına uygun olan `[HttpGet]` ile rotalandırdım (`/api/merchants/{merchantId}/terminals/{terminalNo}/status`).
+- Arayüz (`index.html`) tarafında kullanıcıların ID'leri elle yazıp hata yapmasını önlemek için **Cascading Dropdown (Birbirine bağlı açılır liste)** mimarisi kurdum; kullanıcı bir Merchant seçtiğinde, sadece o işyerine ait terminaller otomatik olarak ikinci kutuya yükleniyor.
+- Backend tarafında bu combobox'ları beslemek amacıyla, performans odaklı ve sadece terminal numarası metinlerini (`IEnumerable<string>`) dönen yeni bir `[HttpGet]` endpoint'i ekledim (`/api/merchants/{merchantId}/terminals/list`).
+- API'nin sadece `true/false` dönmesi yerine; "Terminal bulunamadı", "Kapalı durumda (Inactive)" gibi durumları kontrol ederek spesifik hata mesajları döndüren detaylı bir validasyon yapısı kurdum.
+
+**Öğrendiklerim:**
+- Entity Framework'te `FirstOrDefaultAsync` kullanarak veritabanına tek bir sorgu atıp, dönen objenin özellikleri üzerinden Controller'da detaylı hata yönetimi yapmanın performans ve kod okunabilirliği açısından daha verimli olduğunu gördüm.
+- `[HttpGet]` isteklerinde parametrelerin `[FromBody]` yerine URL üzerinden `[FromRoute]` ile alınması gerektiğini, aksi takdirde ASP.NET'in `RFC9110` referanslı `400 Bad Request` validasyon hatası fırlattığını tecrübe ettim.
+- Aynı URL yolunu paylaşan `[HttpPost]` (ekleme) ve `[HttpGet]` (listeleme) metotlarının tarayıcı tarafında `405 Method Not Allowed` çakışmalarına yol açabileceğini, bu yüzden endpoint yollarını (`/terminals/list` şeklinde) net bir şekilde ayrıştırmanın önemini kavradım.
+
+**Zorlandığım kısım:**
+- Controller'daki URL rotaları ile JavaScript'in `fetch` istekleri arasındaki çakışmalar ve Network sekmesinde karşılaşılan hata ayıklama süreçleri başlangıçta vakit kaybettirse de, istemci-sunucu iletişim mantığını oturtmak açısından çok öğretici oldu.
+
+
+---
+
+## 2026-08-19 (Çarşamba)
+**Görev:** Backend API servisleri için Swagger'a alternatif, tüm işlemleri görsel olarak yönetebileceğim kullanıcı dostu bir HTML kontrol paneli (Dashboard) geliştirmek.
+
+**Yaptıklarım:**
+- Proje dizininde `wwwroot` klasörü oluşturup içine tek sayfalık (SPA) bir `index.html` dosyası ekledim.
+- `Program.cs` dosyasına `app.UseDefaultFiles()` ve `app.UseStaticFiles()` middleware'lerini ekleyerek API sunucusunun doğrudan bu HTML sayfasını ayağa kaldırmasını sağladım.
+- JavaScript `fetch` API kullanarak Üye İşyeri (Merchant) oluşturma, Terminal ekleme, İşlem (Transaction) yapma, İptal (Refund) ve Listeleme gibi tüm Controller endpoint'lerini arayüze bağladım.
+- Arayüzü Apple iOS tasarım yönergelerine (Card yapıları, gölgeler, yuvarlatılmış köşeler) uygun şekilde CSS ile şekillendirdim ve CSS değişkenleri (`:root`) kullanarak sistemi varsayılan olarak "Dark Mode" açılacak şekilde yapılandırdım.
+
+**Öğrendiklerim:**
+- Frontend HTML dosyası ile Backend API'ın aynı sunucuda (`wwwroot` üzerinden) çalıştırılmasının, tarayıcılardaki meşhur CORS (Cross-Origin Resource Sharing) hatalarını nasıl ortadan kaldırdığını öğrendim.
+- C# Controller'dan dönen JSON formatındaki verileri (özellikle array/dizi formatındaki tüm işlem listelerini) JavaScript ile karşılayıp, ekranda okunabilir dinamik HTML tablolarına ve listelerine nasıl dönüştüreceğimi kavradım.
+- `data-theme` attribute'u ve CSS `:root` değişkenleri ile sayfa temasının (Dark/Light mode) ne kadar pratik bir şekilde yönetilebileceğini gördüm.
+
+**Zorlandığım kısım:**
+- C# tarafındaki Route yapıları (`[Route("api/[controller]")]`, path parametreleri) ile JavaScript'teki `fetch` adreslerinin (URL'lerin) tam olarak eşleşmesini ve API'ın beklediği JSON yapısını doğru bir şekilde göndermeyi sağlamak.
+
+**Yarına not:**
+- Geliştirdiğim bu yeni arayüz üzerinden uçtan uca bir senaryo testi yap (Merchant yarat -> Terminal ata -> Kartla işlem yap -> İşlemi iptal et) ve tüm hata mesajlarının (Status 400 Bad Request vs.) ekranda doğru renkte (kırmızı) göründüğünden emin ol.
+
+---
+
+
+## 2026-08-17 (Pazartesi)
+**Görev:** Terminal ve Üye İşyeri (Merchant) durum kontrolü (Status Check) mantığının kurulması, arayüz (Interface) uyumsuzluklarının giderilmesi.
+
+**Yaptıklarım:**
+- Terminal ve Merchant nesnelerindeki `Status` isimlendirme çakışmasını çözmek için özel `TerminalStatus` ve `MerchantStatus` Enum'ları oluşturuldu ve "Composition" yapısı kullanılarak veriler izole edildi.
+- `ITransactionRepository` ve `EfTransactionRepository` içerisindeki metot imzaları (`CheckTerminalStatusValidAsync`, `CheckStatusAsync` vb.) asenkron `Task` ve `Task<bool>` dönüş tiplerine uygun şekilde senkronize edildi.
+- API Controller'daki `CheckStatus` metodu, statik enum'lar yerine doğrudan veritabanından `GetMerchantByIdAsync` ve `GetTerminalByNoAsync` ile güncel verileri çekecek şekilde yeniden yazıldı.
+
+**Öğrendiklerim:**
+- C#'ta Interface (Arayüz) ve onu implemente eden sınıflar (Class) arasında parametre tiplerinin, isimlerin ve asenkron dönüş tiplerinin (`Task`) birebir aynı olması gerektiği.
+- Sadece `Task` dönen asenkron metotların bir değer döndürmek yerine hata (Exception) fırlatarak (örneğin `InvalidOperationException`) kontrol akışını nasıl yönetebileceği.
+- Entity Framework Core'da model değişikliklerinin veritabanına nasıl yansıtılacağı ve SQLite'ın yerel geliştirme ortamında nasıl inceleneceği (`sqlite3` komutları).
+
+**Zorlandığım kısım:**
+- Başlangıçta Interface ve Repository arasındaki metot imzalarının (özellikle parametre tiplerinin string yerine Enum olması ve asenkron `Task` dönüşleri) tam eşleşmesini sağlamak ve derleme hatalarını çözmek zaman aldı.
+
+**Yarına not:**
+- Yazılan durum kontrolü (CheckStatus) endpoint'ini Swagger veya Postman üzerinden farklı senaryolarla (Aktif/Pasif üye işyeri, Bakımdaki terminal vb.) test et.
 
 ## 2026-08-14 (Cuma)
 **Görev:**  Transaction API'sinde Repository Kalıbı ve Model Doğrulama (Validation) Entegrasyonu
