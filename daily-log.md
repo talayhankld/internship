@@ -26,6 +26,29 @@
 
 ---
 
+## 2026-08-19 (Çarşamba)
+**Görev:** Backend API servisleri için Swagger'a alternatif, tüm işlemleri görsel olarak yönetebileceğim kullanıcı dostu bir HTML kontrol paneli (Dashboard) geliştirmek.
+
+**Yaptıklarım:**
+- Proje dizininde `wwwroot` klasörü oluşturup içine tek sayfalık (SPA) bir `index.html` dosyası ekledim.
+- `Program.cs` dosyasına `app.UseDefaultFiles()` ve `app.UseStaticFiles()` middleware'lerini ekleyerek API sunucusunun doğrudan bu HTML sayfasını ayağa kaldırmasını sağladım.
+- JavaScript `fetch` API kullanarak Üye İşyeri (Merchant) oluşturma, Terminal ekleme, İşlem (Transaction) yapma, İptal (Refund) ve Listeleme gibi tüm Controller endpoint'lerini arayüze bağladım.
+- Arayüzü Apple iOS tasarım yönergelerine (Card yapıları, gölgeler, yuvarlatılmış köşeler) uygun şekilde CSS ile şekillendirdim ve CSS değişkenleri (`:root`) kullanarak sistemi varsayılan olarak "Dark Mode" açılacak şekilde yapılandırdım.
+
+**Öğrendiklerim:**
+- Frontend HTML dosyası ile Backend API'ın aynı sunucuda (`wwwroot` üzerinden) çalıştırılmasının, tarayıcılardaki meşhur CORS (Cross-Origin Resource Sharing) hatalarını nasıl ortadan kaldırdığını öğrendim.
+- C# Controller'dan dönen JSON formatındaki verileri (özellikle array/dizi formatındaki tüm işlem listelerini) JavaScript ile karşılayıp, ekranda okunabilir dinamik HTML tablolarına ve listelerine nasıl dönüştüreceğimi kavradım.
+- `data-theme` attribute'u ve CSS `:root` değişkenleri ile sayfa temasının (Dark/Light mode) ne kadar pratik bir şekilde yönetilebileceğini gördüm.
+
+**Zorlandığım kısım:**
+- C# tarafındaki Route yapıları (`[Route("api/[controller]")]`, path parametreleri) ile JavaScript'teki `fetch` adreslerinin (URL'lerin) tam olarak eşleşmesini ve API'ın beklediği JSON yapısını doğru bir şekilde göndermeyi sağlamak.
+
+**Yarına not:**
+- Geliştirdiğim bu yeni arayüz üzerinden uçtan uca bir senaryo testi yap (Merchant yarat -> Terminal ata -> Kartla işlem yap -> İşlemi iptal et) ve tüm hata mesajlarının (Status 400 Bad Request vs.) ekranda doğru renkte (kırmızı) göründüğünden emin ol.
+
+---
+
+
 ## 2026-08-17 (Pazartesi)
 **Görev:** Terminal ve Üye İşyeri (Merchant) durum kontrolü (Status Check) mantığının kurulması, arayüz (Interface) uyumsuzluklarının giderilmesi.
 
