@@ -29,23 +29,27 @@
 
 ## 2026-08-24 (Pazartesi)
 
-
 ### **Yaptıklarım**
 - `Transaction` modeline `CancelledTransaction` alt kayıtları için navigation property ve ilişki kuralını ekledim.
 - Parça parça veya tam iptal durumlarında yeni bir `CancelledTransaction` dekontu oluşturup bunu ana işleme zımbalayan (add) iş kuralını Controller katmanına entegre ettim.
 - Veritabanı dosyasını sıfırlayıp `dotnet ef migrations` ile güncel şemayı ayağa kaldırdım.
 - Repository katmanındaki `GetAllAsync` metodunu opsiyonel `merchantId` ve `terminalNo` parametreleri alacak şekilde `IQueryable` mantığıyla güncelledim.
+- Repository sorgularına `.Include(t => t.CancelledTransactions)` ekleyerek ilişkili iptal verilerinin veritabanından eksiksiz gelmesini sağladım.
+- `Program.cs` dosyasına `ReferenceHandler.IgnoreCycles` JSON ayarını ekleyerek EF Core nesne ilişkilerinden kaynaklanan döngüsel referans (circular reference) ve serileştirme hatalarını çözdüm.
 - Frontend HTML arayüzünü güncelleyerek raporlama bölümüne dinamik filtreleme (Merchant & Terminal bazlı) alanları ekledim ve API ile entegre ettim.
+- Frontend tarafına, referans numarasına tıklandığında açılan ve o işleme ait tüm iptal dekontlarını, tutarlarını, sebeplerini ve tarihini listeleyen şık bir Modal (Pop-up) yapısı kazandırdım.
 
 ### **Öğrendiklerim**
 - Kompozit anahtar (Composite Key) gerektiren senaryolarda (örneğin aynı terminal numarasının farklı merchant'larda olabilmesi durumu), veritabanı tutarlılığı için üst verilerin (`MerchantId`) alt tablolarda da taşınmasının kritik olduğunu öğrendim.
 - C#'ta çoklu `if/else` kombinasyonları yazmak yerine `IQueryable` kullanarak sorguyu parça parça inşa etmenin (Lego mantığı) kod tekrarını nasıl önlediğini kavradım.
 - EF Core Code-First yaklaşımında migration ve veritabanı güncelleme döngüsünün mantığını pekiştirdim.
+- EF Core ile bire-çok ilişkili tabloları çekerken (`.Include`), nesnelerin birbirini tetiklemesiyle oluşan döngüsel JSON serileştirme hatalarının `IgnoreCycles` ile nasıl engelleneceğini kavradım.
+- Büyük ve karmaşık tabloları kalabalıklaştırmak yerine, alt detayları (iptal geçmişi gibi) Modal (pop-up) yapılarıyla kullanıcıya sunmanın UX (kullanıcı deneyimi) açısından değerini gördüm.
 
 ### **Zorlandığım Kısım**
-- Çoklu terminal/merchant ilişkilerinde model tasarımı ve `Transaction` sınıfı ile `CancelledTransaction` listeleri arasındaki kapsam (scope) çakışmalarını çözerken zorlandım, ancak hata ayıklama (debugging) adımlarıyla derleyici hatalarını tek tek aştık.
+- Çoklu terminal/merchant ilişkilerinde model tasarımı ve `Transaction` sınıfı ile `CancelledTransaction` listeleri arasındaki kapsam (scope) çakışmalarını çözerken zorlandım, ancak hata ayıklama adımlarıyla derleyici hatalarını aştık.
+- `CancelledTransactions` ilişkisini ekledikten sonra, içinde iptal kaydı bulunan işlemlerin API üzerinden listelenirken JSON serileştirme hatası vermesi (`Network Error` / 500) nedeniyle bir süre zorlandık; ancak `.Include` ve `IgnoreCycles` yapılandırmasını doğru harmanlayarak bu sorunu da başarıyla çözdük.
 
----
 
 ## 2026-08-20 (Perşembe)
 
