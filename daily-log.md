@@ -47,9 +47,7 @@
 - Büyük ve karmaşık tabloları kalabalıklaştırmak yerine, alt detayları (iptal geçmişi gibi) Modal (pop-up) yapılarıyla kullanıcıya sunmanın UX (kullanıcı deneyimi) açısından değerini gördüm.
 
 ### **Zorlandığım Kısım**
-- Çoklu terminal/merchant ilişkilerinde model tasarımı ve `Transaction` sınıfı ile `CancelledTransaction` listeleri arasındaki kapsam (scope) çakışmalarını çözerken zorlandım, ancak hata ayıklama adımlarıyla derleyici hatalarını aştık.
-- `CancelledTransactions` ilişkisini ekledikten sonra, içinde iptal kaydı bulunan işlemlerin API üzerinden listelenirken JSON serileştirme hatası vermesi (`Network Error` / 500) nedeniyle bir süre zorlandık; ancak `.Include` ve `IgnoreCycles` yapılandırmasını doğru harmanlayarak bu sorunu da başarıyla çözdük.
-
+- Çoklu terminal/merchant ilişkilerinde model tasarımı ve `Transaction` sınıfı ile `CancelledTransaction` listeleri arasındaki kapsam (scope) çakışmalarını çözerken zorlandım, ancak hata ayıklama adımlarıyla derleyici hatalarını aştım.
 
 ## 2026-08-20 (Perşembe)
 
