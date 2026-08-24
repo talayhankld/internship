@@ -22,15 +22,28 @@
 
 ---
 
+
+
 # Internship Daily Log
 
----
-# Internship Daily Log
+
+## 2026-08-24 (Pazartesi)
 
 
----
+### **Yaptıklarım**
+- `Transaction` modeline `CancelledTransaction` alt kayıtları için navigation property ve ilişki kuralını ekledim.
+- Parça parça veya tam iptal durumlarında yeni bir `CancelledTransaction` dekontu oluşturup bunu ana işleme zımbalayan (add) iş kuralını Controller katmanına entegre ettim.
+- Veritabanı dosyasını sıfırlayıp `dotnet ef migrations` ile güncel şemayı ayağa kaldırdım.
+- Repository katmanındaki `GetAllAsync` metodunu opsiyonel `merchantId` ve `terminalNo` parametreleri alacak şekilde `IQueryable` mantığıyla güncelledim.
+- Frontend HTML arayüzünü güncelleyerek raporlama bölümüne dinamik filtreleme (Merchant & Terminal bazlı) alanları ekledim ve API ile entegre ettim.
 
-# Internship Daily Log
+### **Öğrendiklerim**
+- Kompozit anahtar (Composite Key) gerektiren senaryolarda (örneğin aynı terminal numarasının farklı merchant'larda olabilmesi durumu), veritabanı tutarlılığı için üst verilerin (`MerchantId`) alt tablolarda da taşınmasının kritik olduğunu öğrendim.
+- C#'ta çoklu `if/else` kombinasyonları yazmak yerine `IQueryable` kullanarak sorguyu parça parça inşa etmenin (Lego mantığı) kod tekrarını nasıl önlediğini kavradım.
+- EF Core Code-First yaklaşımında migration ve veritabanı güncelleme döngüsünün mantığını pekiştirdim.
+
+### **Zorlandığım Kısım**
+- Çoklu terminal/merchant ilişkilerinde model tasarımı ve `Transaction` sınıfı ile `CancelledTransaction` listeleri arasındaki kapsam (scope) çakışmalarını çözerken zorlandım, ancak hata ayıklama (debugging) adımlarıyla derleyici hatalarını tek tek aştık.
 
 ---
 
